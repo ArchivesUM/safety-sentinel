@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { Shield, Upload, Loader2, FileText, Download, Radio, ChevronDown, CheckCircle2 } from "lucide-react";
+import { Shield, Upload, Loader2, FileText, Download, Radio, ChevronDown, CheckCircle2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { MODULES, buildRulesBlock, fetchEcfrRules, type ModuleId } from "@/lib/rules";
+import { MODULES, buildRulesBlock, fetchEcfrRules, findRuleSource, type ModuleId } from "@/lib/rules";
 import { extractTextFromFile } from "@/lib/extractText";
 import { chunkText, mergeReports, type Report } from "@/lib/chunking";
 import { exportReportPdf } from "@/lib/pdfExport";
@@ -377,14 +377,46 @@ const Index = () => {
                         Rules considered ({report.rules_considered.length})
                       </AccordionTrigger>
                       <AccordionContent>
-                        <ul className="space-y-1.5 pb-2">
-                          {report.rules_considered.map((r) => (
-                            <li key={r.id} className="text-[12px]">
-                              <span className="font-mono text-muted-foreground">{r.id}</span>{" "}
-                              <span className="text-foreground">— {r.title}</span>
-                            </li>
-                          ))}
+                        <ul className="space-y-2 pb-2">
+                          {report.rules_considered.map((r) => {
+                            const src = findRuleSource(r.id);
+                            return (
+                              <li key={r.id} className="text-[12px] leading-relaxed">
+                                {src ? (
+                                  <a
+                                    href={src.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group inline-flex items-baseline gap-1 font-mono text-primary hover:text-primary-glow hover:underline"
+                                    title={`Open ${src.citation} on eCFR`}
+                                  >
+                                    {r.id}
+                                    <ExternalLink className="h-2.5 w-2.5 translate-y-px opacity-60 group-hover:opacity-100" />
+                                  </a>
+                                ) : (
+                                  <span className="font-mono text-muted-foreground">{r.id}</span>
+                                )}{" "}
+                                <span className="text-foreground">— {r.title}</span>
+                                {src && (
+                                  <span className="ml-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+                                    · {src.citation}
+                                  </span>
+                                )}
+                              </li>
+                            );
+                          })}
                         </ul>
+                        <p className="border-t border-border pt-2 pb-1 text-[10px] text-muted-foreground">
+                          Sources from{" "}
+                          <a
+                            href={module.ecfrPageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline hover:text-foreground"
+                          >
+                            eCFR · {module.name}
+                          </a>
+                        </p>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
