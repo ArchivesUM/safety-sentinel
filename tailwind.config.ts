@@ -57,7 +57,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-      },
         status: {
           compliant: "hsl(var(--status-compliant))",
           "compliant-bg": "hsl(var(--status-compliant-bg))",
