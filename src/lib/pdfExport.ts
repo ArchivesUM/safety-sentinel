@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import type { Issue, Report } from "./chunking";
+import { findRuleSource } from "./rules";
 
 type ReviewState = "approved" | "dismissed" | "escalated" | null;
 
@@ -100,10 +101,24 @@ export function exportReportPdf({ report, reviewState, moduleName, documentName 
     y += 8;
   }
 
-  // Rules considered
+  // Rules considered (with clickable links to eCFR)
   if (report.rules_considered.length > 0) {
     writeWrapped("Rules Considered", 14, { bold: true });
-    report.rules_considered.forEach((r) => writeWrapped(`• ${r.id} — ${r.title}`, 10, { color: [80, 80, 80], indent: 8 }));
+    report.rules_considered.forEach((r) => {
+      const src = findRuleSource(r.id);
+      const label = `• ${r.id} — ${r.title}${src ? `  (${src.citation})` : ""}`;
+      writeWrapped(label, 10, { color: [80, 80, 80], indent: 8 });
+      if (src) {
+        // Add a clickable "View on eCFR" link beneath
+        const linkY = y;
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(40, 90, 180);
+        const linkText = "View source on eCFR ↗";
+        doc.textWithLink(linkText, margin + 20, linkY, { url: src.url });
+        y += 14;
+      }
+    });
   }
 
   function writeIssue(issue: Issue, n: number, escalated: boolean) {
