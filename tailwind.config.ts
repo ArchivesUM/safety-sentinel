@@ -58,6 +58,31 @@ export default {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+        status: {
+          compliant: "hsl(var(--status-compliant))",
+          "compliant-bg": "hsl(var(--status-compliant-bg))",
+          partial: "hsl(var(--status-partial))",
+          "partial-bg": "hsl(var(--status-partial-bg))",
+          noncompliant: "hsl(var(--status-noncompliant))",
+          "noncompliant-bg": "hsl(var(--status-noncompliant-bg))",
+        },
+        severity: {
+          high: "hsl(var(--severity-high))",
+          "high-bg": "hsl(var(--severity-high-bg))",
+          medium: "hsl(var(--severity-medium))",
+          "medium-bg": "hsl(var(--severity-medium-bg))",
+          low: "hsl(var(--severity-low))",
+          "low-bg": "hsl(var(--severity-low-bg))",
+        },
+      },
+      backgroundImage: {
+        "gradient-hero": "var(--gradient-hero)",
+        "gradient-subtle": "var(--gradient-subtle)",
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        elevated: "var(--shadow-elevated)",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
