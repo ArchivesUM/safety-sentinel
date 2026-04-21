@@ -1,1 +1,4 @@
 project_id = "qoekttbpavbwoukexybp"
+
+[functions.analyze-compliance]
+verify_jwt = false
