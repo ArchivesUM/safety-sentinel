@@ -137,9 +137,11 @@ const Index = () => {
 
   function handleExport() {
     if (!report) return;
+    // Unreviewed findings default to "approved" so they appear in the export.
+    const effectiveReview = reviewState.map((s) => s ?? "approved");
     exportReportPdf({
       report,
-      reviewState,
+      reviewState: effectiveReview,
       moduleName: module.name,
       documentName: fileName ?? "Pasted procedure",
     });
@@ -388,15 +390,20 @@ const Index = () => {
                   </Accordion>
                 )}
 
-                <Button
-                  className="h-11 w-full gap-2 text-base font-semibold"
-                  variant={allReviewed ? "default" : "outline"}
-                  disabled={!allReviewed}
-                  onClick={handleExport}
-                >
-                  <Download className="h-4 w-4" />
-                  {allReviewed ? "Download PDF report" : `Review all findings to enable export (${reviewedCount}/${report.issues.length})`}
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    className="h-11 w-full gap-2 text-base font-semibold bg-gradient-hero shadow-elevated hover:opacity-95"
+                    onClick={handleExport}
+                  >
+                    <Download className="h-4 w-4" />
+                    Download PDF report
+                  </Button>
+                  {!allReviewed && report.issues.length > 0 && (
+                    <p className="text-center text-[11px] text-muted-foreground">
+                      {reviewedCount}/{report.issues.length} findings reviewed — unreviewed findings will be included as approved.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </section>
